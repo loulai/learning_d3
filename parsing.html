@@ -7,13 +7,24 @@
 </head>
 <body>
 	<script>
-	d3.csv("data.csv", function(data) {
-		eob = data.filter(function(row) {return row["Ease of Business"];})
-		eob.forEach(function(d){
-			d["Ease of Business"] = +d["Ease of Business"];
-		})
-	  console.log(data[0]);
-	});
+	var targetYear = "12/1/05"
+	// var filteredData = consdata.filter(function(d){
+	// 	if(d["Year"] == targetYear){
+	// 		return d;
+	// 	}
+	// })
+
+	d3.csv("data.csv", function(data){
+		console.log(filteredData(data[0]));
+	})
+
+	// d3.csv("data.csv", function(data) {
+	// 	eob = data.filter(function(row) {return row == "Ease of Business";})
+	// 	eob.forEach(function(d){
+	// 		d["Ease of Business"] = +d["Ease of Business"];
+	// 	})
+	//   console.log(data[0]);
+	// });
 	</script>
 
 </body>

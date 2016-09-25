@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Scales</title>
+        <title>Scatterplot Assignment</title>
         <script src="http://d3js.org/d3.v3.min.js"></script>
 
         <style type="text/css">
@@ -48,6 +48,20 @@
                     .attr("width", w)
                     .attr("height", h)
 
+        //Get the data
+        d3.csv("data.csv", function(error, data){
+        	data.forEach(function(d){
+        		d["GDP per Capita"] = +d["GDP per Capita"].replace(/\$|,/g, ""); //remoce $ and ,
+        		d["Ease of Business"] = +d["Ease of Business"];
+        	})
+        	console.log(data[0])
+
+        })
+
+        //X and Y values
+        var xValue = function(d) { return d["GDP per Capita"];}
+        var yValue = function(d) { return d["Ease of Business"];}
+
         //X-axis scale
         var xScale = d3.scale.linear()
                      .domain([0, d3.max(dataset, function(d) { return d[0]; })])
@@ -74,9 +88,6 @@
                   .scale(yScale)
                   .orient("left")
                   .ticks(5);
-
-        //Formatting as percentage
-        //var formatAsPercentage = d3.format(".1%");
 
         //Circles
         svg.selectAll("rect")
