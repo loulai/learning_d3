@@ -40,7 +40,7 @@
         //Width, height, padding variables
         var w = 500;
         var h = 300;
-        var padding = 20;
+        var padding = 30;
 
         //Create SVG element
         var svg = d3.select("body")
@@ -75,6 +75,9 @@
                   .orient("left")
                   .ticks(5);
 
+        //Formatting as percentage
+        //var formatAsPercentage = d3.format(".1%");
+
         //Circles
         svg.selectAll("rect")
            .data(dataset)
@@ -100,7 +103,7 @@
         svg.append("g")
             .attr("class", "axis")  //Assign "axis" class
             .attr("transform", "translate(0," + (h-padding) + ")")
-            .call(xAxis);
+            .call(xAxis;
 
         //Create Y-axis
         svg.append("g")
