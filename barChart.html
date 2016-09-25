@@ -9,7 +9,7 @@
             div.bar {
                 display: inline-block;
                 width: 20px;
-                height: 75px;   /* We'll override this later */
+                height: 100px;   /* We'll override this later */
                 background-color: teal;
                 margin-right: 2px;
                     }
@@ -41,23 +41,16 @@
         var svg = d3.select("body")
                     .append("svg")
                     .attr("width", w)
-                    .attr("height", h)
-                    .attr("fill", function(d){return "rgb(0,0," + (d*10) + ")"});
-                  
+                    .attr("height", h);
 
         svg.selectAll("rect")
            .data(dataset)
            .enter()
            .append("rect")
            .attr("x", function(d, i) {return i * (w / dataset.length);})
-           .attr("y", function(d) {return h-d;}) //Height minus data value
+           .attr("y", function(d) {return h - d;}) //Height minus data value
            .attr("width", w / dataset.length - barPadding)
-           .attr("height", function(d) {return d * 4;});
-
-        svg.selectAll("text")
-            .data(dataset)
-            .enter()
-            .append("text")
+           .attr("height", function(d) {return d*5;});
 
         </script>
     </body>
