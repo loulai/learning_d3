@@ -1,22 +1,26 @@
+<!-- Author: Louise Lai -->
+<!-- Description: Plots a scatterplot of 'GDP per Capita' on x-axis and 'Ease of Business' on y-axis for year 2012 -->
+<!-- Specifications: width = 600px, circle radius = 5px, only displays year 2012 data -->
+
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
 
 <style>
-body {
-  font: 11px sans-serif;
-}
+	body {
+	  font: 11px sans-serif;
+	}
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
 
-.dot {
-  opacity: 0.4;
-}
+	.dot {
+	  opacity: 0.4;
+	}
 
 </style>
 <body>
@@ -27,28 +31,16 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 540 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
-var filterD = d3.csv("data.csv", function(csv) {
-    data = csv.filter(function(row) {
-        return row['Year'] == '12/1/12';
-    })
-});
-/* 
- * value accessor - returns the value to encode for a given data object.
- * scale - maps value to a visual display encoding, such as a pixel position.
- * map function - maps from data value to display value
- * axis - sets up axis
- */ 
-
 // setup x 
-var xValue = function(d) { return d["GDP per Capita"];}, // data -> value
-    xScale = d3.scale.linear().range([0, width]), // value -> display
-    xMap = function(d) { return xScale(xValue(d));}, // data -> display
+var xValue = function(d) { return d["GDP per Capita"];}, 
+    xScale = d3.scale.linear().range([0, width]), 
+    xMap = function(d) { return xScale(xValue(d));}, 
     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 // setup y
-var yValue = function(d) { return d["Ease of Business"];}, // data -> value
-    yScale = d3.scale.linear().range([height, 0]), // value -> display
-    yMap = function(d) { return yScale(yValue(d));}, // data -> display
+var yValue = function(d) { return d["Ease of Business"];}, 
+    yScale = d3.scale.linear().range([height, 0]), 
+    yMap = function(d) { return yScale(yValue(d));}, 
     yAxis = d3.svg.axis().scale(yScale).orient("left");
 
 // add the graph canvas to the body of the webpage
@@ -58,23 +50,23 @@ var svg = d3.select("body").append("svg")
   	.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-//Get the data
+// Get the data
 d3.csv("data.csv", function(error, data){
 
+	// filter for year 2012
 	data = data.filter(function(row) {
         return row["Year"] == "12/1/12";
     })
 
-  data.forEach(function(d){
-    d["GDP per Capita"] = +d["GDP per Capita"].replace(/\$|,/g, ""); //remove $ and ,
-    d["Ease of Business"] = +d["Ease of Business"];
+	//converting string into ints
+  	data.forEach(function(d){
+	    d["GDP per Capita"] = +d["GDP per Capita"].replace(/\$|,/g, ""); //remove $ and ,
+	    d["Ease of Business"] = +d["Ease of Business"];
+});
 
-
-  });
-
-  // don't want dots overlapping axis, so add in buffer to data domain
-  xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-  yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+  // input domain
+  xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+  yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
 
   // x-axis
   svg.append("g")
@@ -86,7 +78,7 @@ d3.csv("data.csv", function(error, data){
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("GDP per Capita");
+      .text("GDP per Capita ($)"); //bonus: labelling axes!
 
   // y-axis
   svg.append("g")
@@ -100,7 +92,7 @@ d3.csv("data.csv", function(error, data){
       .style("text-anchor", "end")
       .text("Ease of Business");
 
-  // draw dots
+  // draw circles
   svg.selectAll(".dot")
       .data(data)
     .enter().append("circle") 
