@@ -15,24 +15,23 @@ body {
 }
 
 .dot {
-  stroke: #000;
+  opacity: 0.4;
 }
 
-/*.tooltip {
-  position: absolute;
-  width: 200px;
-  height: 28px;
-  pointer-events: none;
-}*/
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
 <script>
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 540 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
 
+var filterD = d3.csv("data.csv", function(csv) {
+    data = csv.filter(function(row) {
+        return row['Year'] == '12/1/12';
+    })
+});
 /* 
  * value accessor - returns the value to encode for a given data object.
  * scale - maps value to a visual display encoding, such as a pixel position.
@@ -52,10 +51,6 @@ var yValue = function(d) { return d["Ease of Business"];}, // data -> value
     yMap = function(d) { return yScale(yValue(d));}, // data -> display
     yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-// // setup fill color
-// var cValue = function(d) { return d.Manufacturer;},
-//     color = d3.scale.category10();
-
 // add the graph canvas to the body of the webpage
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -63,12 +58,18 @@ var svg = d3.select("body").append("svg")
   	.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
 //Get the data
 d3.csv("data.csv", function(error, data){
+
+	data = data.filter(function(row) {
+        return row["Year"] == "12/1/12";
+    })
+
   data.forEach(function(d){
     d["GDP per Capita"] = +d["GDP per Capita"].replace(/\$|,/g, ""); //remove $ and ,
     d["Ease of Business"] = +d["Ease of Business"];
+
+
   });
 
   // don't want dots overlapping axis, so add in buffer to data domain
@@ -102,13 +103,12 @@ d3.csv("data.csv", function(error, data){
   // draw dots
   svg.selectAll(".dot")
       .data(data)
-    .enter().append("circle")
+    .enter().append("circle") 
       .attr("class", "dot")
-      .attr("r", 3.5)
+      .attr("r", 5) //radius of 5px
       .attr("cx", xMap)
       .attr("cy", yMap)
       .style("fill", "red");
-
 
 });
 
