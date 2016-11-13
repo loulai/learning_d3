@@ -1,0 +1,126 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Style-Type" content="text/css" /> 
+    <title>Louise Lai Scatterplot Assignment.html</title>
+    <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="/library/skin/neo-new-york-u/tool.css" type="text/css" rel="stylesheet" media="all" />
+    <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+    <style>body { padding: 5px !important; }</style>
+  </head>
+  <body>
+<!-- Author: Louise Lai -->
+<!-- Description: Plots a scatterplot of 'GDP per Capita' on x-axis and 'Ease of Business' on y-axis for year 2012 -->
+<!-- Specifications: width = 600px, circle radius = 5px, only displays year 2012 data -->
+
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<style>
+	body {
+	  font: 11px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+
+	.dot {
+	  opacity: 0.4;
+	}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 540 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+// setup x 
+var xValue = function(d) { return d["GDP per Capita"];}, 
+    xScale = d3.scale.linear().range([0, width]), 
+    xMap = function(d) { return xScale(xValue(d));}, 
+    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// setup y
+var yValue = function(d) { return d["Ease of Business"];}, 
+    yScale = d3.scale.linear().range([height, 0]), 
+    yMap = function(d) { return yScale(yValue(d));}, 
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// add the graph canvas to the body of the webpage
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+d3.csv("data.csv", function(error, data){ // assumes data.csv is in same folder
+
+	// filter for year 2012
+	data = data.filter(function(row) {
+        return row["Year"] == "12/1/12";
+    })
+
+	//converting string into ints
+  	data.forEach(function(d){
+	    d["GDP per Capita"] = +d["GDP per Capita"].replace(/\$|,/g, ""); //remove $ and ,
+	    d["Ease of Business"] = +d["Ease of Business"];
+});
+
+  // input domain
+  xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+  yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+
+  // x-axis
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("GDP per Capita ($)"); //bonus: labelling axes!
+
+  // y-axis
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Ease of Business");
+
+  // draw circles
+  svg.selectAll(".dot")
+      .data(data)
+    .enter().append("circle") 
+      .attr("class", "dot")
+      .attr("r", 5) //radius of 5px
+      .attr("cx", xMap)
+      .attr("cy", yMap)
+      .style("fill", "red");
+
+  circle.transition()
+    .duration(1500)
+    .attr("fill", "red");
+
+
+});
+
+</script>
+</body>
+</html>
+  </body>
+</html>
