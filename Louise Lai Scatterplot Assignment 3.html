@@ -2,12 +2,28 @@
   <head>
     <meta http-equiv="Content-Style-Type" content="text/css" /> 
     <title>Louise Lai Scatterplot Assignment.html</title>
+
+
     <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
     <link href="/library/skin/neo-new-york-u/tool.css" type="text/css" rel="stylesheet" media="all" />
+
     <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
     <style>body { padding: 5px !important; }</style>
   </head>
+
   <body>
+
+  <!-- label select option /option -->
+
+<label for="X-value">X-Value</label>
+  <select id="X-Value" onchange="onClick()">
+  	<option value="gdpcapita">GDP per Capita</option>
+  	<option value="ease">Ease of Business</option>
+  	<option value="health">Health Exp/Capita</option>
+  	<option value="lifef">Life Expectancy Female</option>
+  	<option value="lifem">Life Expectancy Male</option>
+  </select>
+
 <!-- Author: Louise Lai -->
 <!-- Description: Plots a scatterplot of 'GDP per Capita' on x-axis and 'Ease of Business' on y-axis for year 2012 -->
 <!-- Specifications: width = 600px, circle radius = 5px, only displays year 2012 data -->
@@ -44,19 +60,6 @@
 		border-radius: 8px;
 	}
 
-	p.tooltip{
-		position: absolute;
-		text-align: left;
-		width: 100px;
-		height: 70px;
-		padding: 2px;
-		font: 13px sans-serif;
-		background: pink;
-		border: 0px;
-		border-radius: 8px;
-	}
-
-
 
 </style>
 <body>
@@ -85,6 +88,7 @@ var svg = d3.select("body").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   	.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
 // Get the data
 d3.csv("data.csv", function(error, data){ // assumes data.csv is in same folder
@@ -135,7 +139,8 @@ d3.csv("data.csv", function(error, data){ // assumes data.csv is in same folder
   // draw circles
 	svg.selectAll(".dot")
 		.data(data)
-	.enter().append("circle") 
+	.enter().append("circle")
+	.filter(function(d) { return d["GDP per Capita"] > 10000 })    //filtering done here. Change to slider later!
 			.attr("class", "dot")
 			.attr("r", 5) //radius of 5px
 			.attr("cx", xMap)
@@ -176,8 +181,21 @@ d3.csv("data.csv", function(error, data){ // assumes data.csv is in same folder
 
 			});
 
- 
+function onClick(){
+	var choice = document.getElementById("X-Value").value;
 
+/*this needs to be updated to actually work!
+// setup x 
+var xValue = function(d) { return d[choice];}, 
+    xScale = d3.scale.linear().range([0, width]), 
+    xMap = function(d) { return xScale(xValue(d));}, 
+    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// input domain
+  xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+  yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+*/
+}
 
 
 });
