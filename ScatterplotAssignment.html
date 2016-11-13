@@ -91,7 +91,7 @@
 
         //Circles
         svg.selectAll("rect")
-           .data(dataset)
+           .data(data)
            .enter()
            .append("circle")
            .attr("cx", function(d) {return xScale(d[0]);})
