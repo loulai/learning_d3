@@ -44,6 +44,20 @@
 		border-radius: 8px;
 	}
 
+	p.tooltip{
+		position: absolute;
+		text-align: left;
+		width: 100px;
+		height: 70px;
+		padding: 2px;
+		font: 13px sans-serif;
+		background: pink;
+		border: 0px;
+		border-radius: 8px;
+	}
+
+
+
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -128,22 +142,38 @@ d3.csv("data.csv", function(error, data){ // assumes data.csv is in same folder
 			.attr("cy", yMap)
 			.style("fill", "red")
 			.on("mouseover", function(d){ //the mouseover div
-				div.transition()
+				d3.select(this) //change size and fill
+					.attr("r", 7) //radius to 7
+					.style("fill", "darkgreen");
+				
+				div.transition() 
 					.duration(100)
 					.style("opacity", .9)
+
 				div.html( //formatting mouseover box contents
 					"<b>" + d.Country + "</b>" + "<br/>" 
 					+ "Ease:" + d["Ease of Business"] + "<br/>"
 					+ "GDP:" + d.GDP)
 					.style("left", (d3.event.pageX) + "px")		
 		            .style("top", (d3.event.pageY) + "px");	
+
+		       div.html( //formatting mouseover box contents
+					"<b>" + d.Country + "</b>" + "<br/>" 
+					+ "Ease:" + d["Ease of Business"] + "<br/>"
+					+ "GDP:" + d["GDP per Capita"]);
 				
 				})
 
 			.on("mouseout", function(d){ //fade the div after mouseleaves
+				d3.select(this).attr("r", 5).style("fill", "red"); 
 				div.transition()
 					.duration(100)
 					.style("opacity", 0);
+				})
+
+			.on("contextmenu", function(d){
+				d3.select(this).style("opacity", 0); 
+
 			});
 
  
