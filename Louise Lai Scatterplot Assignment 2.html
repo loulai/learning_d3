@@ -32,6 +32,19 @@
 	  opacity: 0.4;
 	}
 
+	div.tooltip{ 
+		position: absolute;
+		text-align: center;
+		width: 60px;
+		height: 28px;
+		padding: 2px;
+		font: 12px sans-serif;
+		background: lightsteelblue;
+		border: 0px;
+		border-radius: 8px;
+		pointer-events: none;
+	}
+
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -102,19 +115,34 @@ d3.csv("data.csv", function(error, data){ // assumes data.csv is in same folder
       .style("text-anchor", "end")
       .text("Ease of Business");
 
-  // draw circles
-  svg.selectAll(".dot")
-      .data(data)
-    .enter().append("circle") 
-      .attr("class", "dot")
-      .attr("r", 5) //radius of 5px
-      .attr("cx", xMap)
-      .attr("cy", yMap)
-      .style("fill", "red");
+  var div = d3.select("body").append("div")
+		  .attr("class", "tooltip")
+		  .style("opacity", 0);
 
-  circle.transition()
-    .duration(1500)
-    .attr("fill", "red");
+  // draw circles
+	svg.selectAll(".dot")
+	.data(data)
+	.enter().append("circle") 
+	.attr("class", "dot")
+	.attr("r", 5) //radius of 5px
+	.attr("cx", xMap)
+	.attr("cy", yMap)
+	.style("fill", "red")
+	.on("mouseover", function(d){
+		div.transition()
+			.duration(200)
+			.style("opacity", .9);
+		div.html("hello");
+		})
+	
+	.on("mouseout", function(d){
+		div.transition()
+		.duration(500)
+		.style("opacity",0);
+	});
+
+ 
+
 
 
 });
