@@ -1,3 +1,7 @@
+
+<!-- Author: Louise Lai -->
+
+
 <html>
   <head>
     <meta http-equiv="Content-Style-Type" content="text/css" /> 
@@ -13,9 +17,25 @@
 
   <body>
 
-  <!-- label select option /option -->
+<h1>Louise Y. Lai</h1>
+<h2><i>Scatterplot Assignment Two</i></h2>
+Achieved:
+<ul>
+	<li>Dot can be selected to see its <i>Name, GDP per Capita</i> and <i>Ease of Business</i> above the scatterplot</li>
+	<li>Dot is removed using right click</li>
+	<li>Upon hover: Dot is highlighed</li>
+	<li>Upon hover: Tooltip displays <i>Name, GDP per Capita</i> and <i>Ease of Business</i></li>
+</ul>
 
-<label for="X-value">X-Value</label>
+Not yet achieved:
+<ul>
+	<li>Query (but nearly there!)</li>
+	<li>Filter</li>
+	<li>Zooming</li>
+</ul>
+
+<p>
+<label for="X-Value">X-Value</label>
   <select id="X-Value" onchange="onClick()">
   	<option value="gdpcapita">GDP per Capita</option>
   	<option value="ease">Ease of Business</option>
@@ -24,9 +44,16 @@
   	<option value="lifem">Life Expectancy Male</option>
   </select>
 
-<!-- Author: Louise Lai -->
-<!-- Description: Plots a scatterplot of 'GDP per Capita' on x-axis and 'Ease of Business' on y-axis for year 2012 -->
-<!-- Specifications: width = 600px, circle radius = 5px, only displays year 2012 data -->
+<label for="Y-Value">Y-Value</label>
+  <select id="Y-Value" onchange="onClick()">
+  	<option value="gdpcapita">GDP per Capita</option>
+  	<option value="ease">Ease of Business</option>
+  	<option value="health">Health Exp/Capita</option>
+  	<option value="lifef">Life Expectancy Female</option>
+  	<option value="lifem">Life Expectancy Male</option>
+  </select>
+</p>
+
 
 <!DOCTYPE html>
 <html>
@@ -70,14 +97,17 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 540 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
+var xFeature = "GDP per Capita"; 
+var yFeature = "Ease of Business";
+
 // setup x 
-var xValue = function(d) { return d["GDP per Capita"];}, 
+var xValue = function(d) { return d[xFeature];}, 
     xScale = d3.scale.linear().range([0, width]), 
     xMap = function(d) { return xScale(xValue(d));}, 
     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 // setup y
-var yValue = function(d) { return d["Ease of Business"];}, 
+var yValue = function(d) { return d[yFeature];}, 
     yScale = d3.scale.linear().range([height, 0]), 
     yMap = function(d) { return yScale(yValue(d));}, 
     yAxis = d3.svg.axis().scale(yScale).orient("left");
@@ -140,7 +170,7 @@ d3.csv("data.csv", function(error, data){ // assumes data.csv is in same folder
 	svg.selectAll(".dot")
 		.data(data)
 	.enter().append("circle")
-	.filter(function(d) { return d["GDP per Capita"] > 10000 })    //filtering done here. Change to slider later!
+	//.filter(function(d) { return d["GDP per Capita"] > 10000 })    //filtering done here. Change to taking input later!
 			.attr("class", "dot")
 			.attr("r", 5) //radius of 5px
 			.attr("cx", xMap)
@@ -177,24 +207,103 @@ d3.csv("data.csv", function(error, data){ // assumes data.csv is in same folder
 				})
 
 			.on("contextmenu", function(d){
-				d3.select(this).style("opacity", 0); 
+				d3.select(this).remove(); 
+				d3.event.preventDefault();
 
 			});
 
 function onClick(){
-	var choice = document.getElementById("X-Value").value;
+	var xChoice = document.getElementById("X-Value").value;
+	xFeature = xChoice;
 
-/*this needs to be updated to actually work!
-// setup x 
-var xValue = function(d) { return d[choice];}, 
-    xScale = d3.scale.linear().range([0, width]), 
-    xMap = function(d) { return xScale(xValue(d));}, 
-    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+	// setup x 
+	var xValue = function(d) { return d[xFeature];}, 
+	    xScale = d3.scale.linear().range([0, width]), 
+	    xMap = function(d) { return xScale(xValue(d));}, 
+	    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-// input domain
+	// setup y
+	var yValue = function(d) { return d[yFeature];}, 
+	    yScale = d3.scale.linear().range([height, 0]), 
+	    yMap = function(d) { return yScale(yValue(d));}, 
+	    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+  // input domain
   xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
   yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
-*/
+
+  // x-axis
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("GDP per Capita ($)"); //bonus: labelling axes!
+
+  // y-axis
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Ease of Business");
+
+  var div = d3.select("body").append("div")
+		  .attr("class", "tooltip")
+		  .style("opacity", 0);
+
+  // draw circles
+	svg.selectAll(".dot")
+		.data(data)
+	.enter().append("circle")
+			.attr("class", "dot")
+			.attr("r", 5) //radius of 5px
+			.attr("cx", xMap)
+			.attr("cy", yMap)
+			.style("fill", "red")
+			.on("mouseover", function(d){ //the mouseover div
+				d3.select(this) //change size and fill
+					.attr("r", 7) //radius to 7
+					.style("fill", "darkgreen");
+				
+				div.transition() 
+					.duration(100)
+					.style("opacity", .9)
+
+				div.html( //formatting mouseover box contents
+					"<b>" + d.Country + "</b>" + "<br/>" 
+					+ "Ease:" + d["Ease of Business"] + "<br/>"
+					+ "GDP:" + d.GDP)
+					.style("left", (d3.event.pageX) + "px")		
+		            .style("top", (d3.event.pageY) + "px");	
+
+		       div.html( //formatting mouseover box contents
+					"<b>" + d.Country + "</b>" + "<br/>" 
+					+ "Ease:" + d["Ease of Business"] + "<br/>"
+					+ "GDP:" + d["GDP per Capita"]);
+				
+				})
+
+			.on("mouseout", function(d){ //fade the div after mouseleaves
+				d3.select(this).attr("r", 5).style("fill", "red"); 
+				div.transition()
+					.duration(100)
+					.style("opacity", 0);
+				})
+
+			.on("contextmenu", function(d){
+				d3.select(this).remove(); 
+				d3.event.preventDefault();
+
+			});
 }
 
 
